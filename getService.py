@@ -102,7 +102,7 @@ class proCument:
 		content = urllib2.urlopen(req).read()
 
 		tmp_file = open(self.path_temp+'gpconent_src.txt','w')
-		tmp_file.write(content)
+		tmp_file.write(content.decode('cp874').encode('utf-8'))
 		#print content.decode('cp874')
 		#print 'complete !'
 
