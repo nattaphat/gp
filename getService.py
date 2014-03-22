@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import BeautifulSoup
+# from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 import urllib2
 import urllib
 import os
@@ -74,6 +75,7 @@ class proCument:
 		# except Exception,e:
 		# 	print(e)
 
+		#################################### First page
 		http_header = {
 			"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.46 Safari/535.11",
 			"Accept" : "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,text/png,*/*;q=0.5",
@@ -83,7 +85,7 @@ class proCument:
 			"Host" : "www.mitfahrgelegenheit.de",
 			"Referer" : "http://www.mitfahrgelegenheit.de/mitfahrzentrale/Dresden/Potsdam.html/"
 		}
-
+		#moiId --> province id
 		params = {
 			'announceType':'2',
 			'deptSubId':'',
@@ -97,12 +99,56 @@ class proCument:
 			'homeflag':'S'
 		}
 
-		data = urllib.urlencode(params)
-		req = urllib2.Request(url=url,data=data)
-		content = urllib2.urlopen(req).read()
+		##################################################### Wirte First page to file
+		# data = urllib.urlencode(params)
+		# req = urllib2.Request(url=url,data=data)
+		# content = urllib2.urlopen(req).read()
 
-		tmp_file = open(self.path_temp+'gpconent_src.txt','w')
-		tmp_file.write(content.decode('cp874').encode('utf-8'))
+		# tmp_file = open(self.path_temp+'gpconent_src.txt','w')
+		# tmp_file.write(content.decode('cp874').encode('utf-8'))
+
+
+		#################################################### Read file and Extract
+		navy_read = open(self.path_temp+'gpconent_src.txt','r')
+		soup = BeautifulSoup(navy_read)
+		rs =  soup.findAll('tr',{'id':re.compile('^trDetail')})
+
+		line = [td.findAll('td') for td in rs]
+		print line
+
+		################################################### Load data from Next page
+		#moiId --> province id
+		""" 
+		Page1 : none
+		Page2 : [showBegin:51,showEnd:101,pageGroup:2] contain 50 rows
+		Page3 : [101,201,3] contain 50 rows
+		Page4 : [201,251,4] contain 50 rows
+		"""
+		params_nextpage = {
+			'govStatus':'S',
+			'announceType':'2',
+			'budgetYear':'',
+			'deptId':'',
+			'deptSubId':'',
+			'moiId':'100000',
+			'methodId':'',
+			'typeId':'',
+			'project_id':'',
+			'projectName':'',
+			'announceSDate':'',
+			'announceEDate':'',
+			'projectMoneyS':'',
+			'projectMoneyE':'',
+			'projectStatus':'',
+			'beginrec':'51',
+			'endrec' : '101',
+			'grouppage' : '2',
+			'homeflag' :"S",
+			'servlet' : "FPRO9965Servlet",
+			'proc_id' : "FPRO9965",
+			'mode' : "SEARCH"
+		}
+	
 		#print content.decode('cp874')
 		#print 'complete !'
 
