@@ -1,0 +1,1010 @@
+
+
+
+
+
+
+
+
+
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=TIS-620">
+  <title>รหัสหน่วยงาน</title>
+  <link type="text/css" rel="StyleSheet" href="/EGPWeb/style/agc/main.css" />
+  <script type="text/javascript" language="JavaScript1.2" src="/EGPWeb/js/provinceAjaxHelp.js"></script>
+  <script type="text/javascript" src="/EGPWeb/js/AgencyErrorWarning.js"></script>
+  <script type="text/javascript" src="/EGPWeb/js/commonJS.js"></script>
+  <script language="JavaScript">
+	
+	function clickDept(deptid){
+		window.returnValue=deptid;
+		window.close();
+	}
+	
+	function setOnload() {
+		var f1 = document.form1;
+		refreshOrgList('ORG_ID','ORG_UNIT_ID','1');
+		refreshOrgUnitList('ORG_ID','ORG_UNIT_ID','1');
+		refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+		refreshAmperList('PROV_ID','AMP_ID','MOI_ID');
+		refreshTambolList('PROV_ID','AMP_ID','MOI_ID');
+		refreshMinisList('MINISTRY_CODE','','1','1');
+		
+		if(f1.hidPROV_ID.value!="" && f1.hidAMP_ID.value=="" && f1.hidMOI_ID.value==""){/// ค้นหา จังหวัด
+			refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+		}else if(f1.hidAMP_ID.value!="" && f1.hidMOI_ID.value==""){/// ค้นหา จังหวัด อำเภอ
+			refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+			refreshAmperListSelect('PROV_ID','AMP_ID','MOI_ID','');
+		}
+	}
+	
+	function clickClear() {
+		var f1 = document.form1;
+		f1.ORG_ID.disabled=false;
+		f1.ORG_UNIT_ID.disabled=false;
+		f1.QUERY_TYPE.value="";
+		f1.QUERY.value="";
+		f1.PROV_ID.value="";
+		f1.AMP_ID.value="";
+		f1.MOI_ID.value="";
+		f1.MINISTRY_CODE.value="";
+		f1.QUERY_TYPE[0].checked=false;
+		f1.QUERY_TYPE[1].checked=false;
+		f1.submit();
+	}
+	
+	function clickSearch() {
+		var f1 = document.form1;
+		
+		if (f1.QUERY_TYPE[0].checked || f1.QUERY_TYPE[1].checked) {
+			if (f1.QUERY.value.length < 4) {
+				alert(showMessage(E1001)+"รหัส/ชื่อหน่วยงาน อย่างน้อย 4 ตัวอักษร");
+				f1.QUERY.focus();
+				return false;
+			}
+		} else {
+			if (f1.QUERY.value != "") {
+				alert(showMessage(E1001)+" ค้นหาจาก รหัสหรือชื่อหน่วยงาน");
+				f1.QUERY_TYPE[0].focus();
+				return false;
+			}
+		}
+		
+		f1.ORG_ID.disabled=false;
+		f1.ORG_UNIT_ID.disabled=false;
+
+		f1.flag.value="SEARCH";
+//		action="./FAGN0103H.jsp";
+		f1.action="control.egp";
+		f1.submit();
+		
+		
+	}
+
+  </script>
+ </head>
+ <base target="_parent">
+<body onLoad="setOnload()" bgcolor="#ffffff" style="background-image: url('')">
+<form name="form1" method="POST" >
+<table width="750" border="0" cellspacing="1" cellpadding="2" align="center" >
+	<tr class="trBlue">
+		<td colspan="2" align="left">
+			&nbsp;<span class="blue">&nbsp;<b>รหัสหน่วยงาน</b></span>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right" width="225"> ประเภทหน่วยงานภาครัฐ&nbsp;</td>
+		<td>&nbsp;
+			<select id="ORG_ID" name="ORG_ID" class="selCommon" disabled></select>
+			<input type="hidden" id="ORG_NAME" name="ORG_NAME" class="txtDisabled" value="1" readonly>
+			<input type="hidden" id="" name="" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right">ประเภทย่อยหน่วยงานภาครัฐ&nbsp;</td>
+		<td>&nbsp;
+			<select id="ORG_UNIT_ID" name="ORG_UNIT_ID" class="selCommon" disabled></select>
+			<input type="hidden" id="ORG_UNIT_NAME"  name="ORG_UNIT_NAME" class="txtDisabled" value="" readonly>
+			<input type="hidden" id="" name="" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right">ค้นหาจาก&nbsp;</td>
+		<td>&nbsp;
+			<input type="radio" id="QUERY_TYPE"  name="QUERY_TYPE" value="I" onClick="" 
+				> รหัสหน่วยงาน
+			<input type="radio" id="QUERY_TYPE" name="QUERY_TYPE" value="N" onClick="" 
+				> ชื่อหน่วยงาน
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> ระบุรหัส/ชื่อหน่วยงาน&nbsp;</td>
+		<td>&nbsp;
+			<input type="text" id="QUERY"  name="QUERY" class="txtCommon" size="50" maxlength="100" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> จังหวัด&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="PROV_ID" name="PROV_ID" onChange="refreshAmperList('PROV_ID','AMP_ID','MOI_ID')"></select>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> อำเภอ/เขต&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="AMP_ID" name="AMP_ID" onChange="refreshTambolList('PROV_ID','AMP_ID','MOI_ID')"></select>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> ตำบล/แขวง&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="MOI_ID" name="MOI_ID"></select>
+		</td>
+	</tr>	
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> กระทรวง&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="MINISTRY_CODE" name="MINISTRY_CODE"></select>
+		</td>
+	</tr>	
+	<tr class="trGray">
+		<td colspan="2" align="center">
+			<input type="button" id="SEARCH" name="SEARCH" class="btnCommon"  value="ค้นหา" onClick="clickSearch()"
+				style="background: url('/EGPWeb/images/agc/btnBlue100.gif'); width: 100px; height: 25px;">
+			<input type="button" id="CLEAR"  name="CLEAR" class="btnCommon"  value="ล้างตัวเลือก" onClick="clickClear()"
+				style="background: url('/EGPWeb/images/agc/btnBlue100.gif'); width: 100px; height: 25px;">
+		</td>
+	</tr>
+
+	<tr class="trBlue" style="height: 22px;">
+		<td colspan="" align="center">
+			&nbsp;<span class="blue">&nbsp;รหัสหน่วยงาน</span>
+		</td>
+		<td colspan="" align="center">
+			&nbsp;<span class="blue">&nbsp;ชื่อหน่วยงาน</span>
+		</td>
+	</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" >
+<tr><td>
+
+<div style="width:100%; height:283; overflow:auto;">
+<table width="100%" border="0" cellspacing="1" cellpadding="2" align="center" >
+
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0114')">0114</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0114')">สำนักงานกองทุนสนับสนุนการวิจัย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0121')">0121</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0121')">สำนักงานคณะกรรมการพัฒนาระบบราชการ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0201')">0201</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0201')">สำนักงานปลัดกระทรวงกลาโหม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0202')">0202</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0202')">กรมราชองครักษ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0203')">0203</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0203')">กองบัญชาการทหารสูงสุด</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0204')">0204</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0204')">กองทัพบก</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0205')">0205</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0205')">กองทัพเรือ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0206')">0206</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0206')">กองทัพอากาศ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0119')">0119</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0119')">กองอำนวยการรักษาความมั่นคงภายใน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0304')">0304</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0304')">กรมบัญชีกลาง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0305')">0305</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0305')">กรมศุลกากร</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0306')">0306</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0306')">กรมสรรพสามิต</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0307')">0307</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0307')">กรมสรรพากร</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0308')">0308</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0308')">สำนักงานคณะกรรมการนโยบายรัฐวิสาหกิจ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0309')">0309</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0309')">สำนักงานบริหารหนี้สาธารณะ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0311')">0311</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0311')">สำนักงานเศรษฐกิจการคลัง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0402')">0402</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0402')">สำนักงานปลัดกระทรวงการต่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0403')">0403</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0403')">กรมการกงสุล</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0404')">0404</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0404')">กรมพิธีการทูต</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0405')">0405</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0405')">กรมยุโรป</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0406')">0406</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0406')">สำนักงานความร่วมมือเพื่อการพัฒนาระหว่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0407')">0407</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0407')">กรมเศรษฐกิจระหว่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0302')">0302</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0302')">สำนักงานปลัดกระทรวงการคลัง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0303')">0303</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0303')">กรมธนารักษ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0408')">0408</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0408')">กรมสนธิสัญญาและกฎหมาย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0409')">0409</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0409')">กรมสารนิเทศ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0411')">0411</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0411')">กรมองค์การระหว่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0412')">0412</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0412')">กรมอเมริกาและแปซิฟิกใต้</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0413')">0413</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0413')">กรมอาเซียน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0414')">0414</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0414')">กรมเอเซียตะวันออก</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0415')">0415</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0415')">กรมเอเซียใต้ ตะวันออกกลางและแอฟริกา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0502')">0502</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0502')">สำนักงานปลัดกระทรวงการท่องเที่ยวและกีฬา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0503')">0503</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0503')">กรมพลศึกษา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0504')">0504</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0504')">กรมการท่องเที่ยว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0505')">0505</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0505')">สำนักงานส่งเสริมการจัดประชุมและนิทรรศการ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0506')">0506</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0506')">สถาบันการพลศึกษา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0602')">0602</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0602')">สำนักงานปลัดกระทรวงการพัฒนาสังคมและความมั่นคงของมนุษย์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0604')">0604</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0604')">สำนักงานกิจการสตรีและสถาบันครอบครัว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0605')">0605</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0605')">สำนักงานส่งเสริมสวัสดิภาพและพิทักษ์เด็ก เยาวชน ผู้ด้อยโอกาส และผู้สูงอายุ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0702')">0702</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0702')">สำนักงานปลัดกระทรวงเกษตรและสหกรณ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0703')">0703</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0703')">กรมชลประทาน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0704')">0704</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0704')">กรมตรวจบัญชีสหกรณ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0705')">0705</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0705')">กรมประมง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0706')">0706</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0706')">กรมปศุสัตว์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0708')">0708</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0708')">กรมพัฒนาที่ดิน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0709')">0709</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0709')">กรมวิชาการเกษตร</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0711')">0711</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0711')">กรมส่งเสริมการเกษตร</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0712')">0712</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0712')">กรมส่งเสริมสหกรณ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0713')">0713</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0713')">สำนักงานการปฎิรูปที่ดินเพื่อเกษตรกรรม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0714')">0714</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0714')">สำนักงานมาตรฐานสินค้าเกษตรและอาหารแห่งชาติ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0603')">0603</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0603')">กรมพัฒนาสังคมและสวัสดิการ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0718')">0718</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0718')">กรมการข้าว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0802')">0802</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0802')">สำนักงานปลัดกระทรวงคมนาคม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0804')">0804</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0804')">กรมการขนส่งทางบก</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0805')">0805</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0805')">กรมการบินพลเรือน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0806')">0806</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0806')">กรมทางหลวง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0807')">0807</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0807')">กรมทางหลวงชนบท</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0808')">0808</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0808')">สำนักงานนโยบายและแผนการขนส่งและจราจร</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0902')">0902</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0902')">สำนักงานปลัดกระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0903')">0903</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0903')">กรมควบคุมมลพิษ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0904')">0904</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0904')">กรมทรัพยากรทางทะเลและชายฝั่ง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0905')">0905</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0905')">กรมทรัพยากรธรณี</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0906')">0906</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0906')">กรมทรัพยากรน้ำ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0715')">0715</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0715')">สำนักงานเศรษฐกิจการเกษตร</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0908')">0908</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0908')">กรมส่งเสริมคุณภาพสิ่งแวดล้อม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0911')">0911</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0911')">สำนักงานนโยบายและแผนทรัพยากรธรรมชาติและสิ่งแวดล้อม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0912')">0912</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0912')">กรมป่าไม้</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1104')">1104</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1104')">กรมอุตุนิยมวิทยา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1105')">1105</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1105')">สำนักงานสถิติแห่งชาติ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1202')">1202</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1202')">สำนักงานปลัดกระทรวงพลังงาน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1203')">1203</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1203')">กรมเชื้อเพลิงธรรมชาติ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1204')">1204</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1204')">กรมธุรกิจพลังงาน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1205')">1205</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1205')">กรมพัฒนาพลังงานทดแทนและอนุรักษ์พลังงาน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1206')">1206</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1206')">สำนักงานนโยบายและแผนพลังงาน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('0907')">0907</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('0907')">กรมทรัพยากรน้ำบาดาล</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1304')">1304</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1304')">กรมการค้าภายใน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1306')">1306</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1306')">กรมเจรจาการค้าระหว่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1307')">1307</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1307')">กรมทรัพย์สินทางปัญญา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1309')">1309</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1309')">กรมส่งเสริมการค้าระหว่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1502')">1502</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1502')">สำนักงานปลัดกระทรวงมหาดไทย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1503')">1503</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1503')">กรมการปกครอง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1504')">1504</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1504')">กรมการพัฒนาชุมชน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1506')">1506</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1506')">กรมป้องกันและบรรเทาสาธารณภัย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1507')">1507</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1507')">กรมโยธาธิการและผังเมือง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1302')">1302</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1302')">สำนักงานปลัดกระทรวงพาณิชย์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1303')">1303</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1303')">กรมการค้าต่างประเทศ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1508')">1508</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1508')">กรมส่งเสริมการปกครองท้องถิ่น</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1602')">1602</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1602')">สำนักงานปลัดกระทรวงยุติธรรม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1603')">1603</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1603')">กรมคุมประพฤติ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1604')">1604</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1604')">กรมคุ้มครองสิทธิและเสรีภาพ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1605')">1605</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1605')">กรมบังคับคดี</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1607')">1607</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1607')">กรมราชทัณฑ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1608')">1608</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1608')">กรมสอบสวนคดีพิเศษ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1609')">1609</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1609')">สำนักงานกิจการยุติธรรม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1610')">1610</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1610')">สถาบันนิติวิทยาศาสตร์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1611')">1611</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1611')">สำนักงานคณะกรรมการป้องกันและปราบปรามยาเสพติด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1702')">1702</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1702')">สำนักงานปลัดกระทรวงแรงงาน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1703')">1703</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1703')">กรมการจัดหางาน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1704')">1704</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1704')">กรมพัฒนาฝีมือแรงงาน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('1705')">1705</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('1705')">กรมสวัสดิการและคุ้มครองแรงงาน</a></td>
+	</tr>
+
+</table>
+</div>
+
+</td></tr></table>
+
+<input type="hidden" id="flag"      name="flag" value="SEARCH %>">
+<input type="hidden" id="servlet"   name="servlet" value="gojsp">
+<input type="hidden" id="proc_id"   name="proc_id" value="FAGN0103H">
+<input type="hidden" id="proc_name" name="proc_name" value="Agency">
+<input type="hidden" id="url"       name="url" value="agc/">
+
+<input type="hidden" id="hidPROV_ID"  name="hidPROV_ID" value="">
+<input type="hidden" id="hidAMP_ID"   name="hidAMP_ID" value="">
+<input type="hidden" id="hidMOI_ID"   name="hidMOI_ID" value="">
+<input type="hidden" id="hidMINIS_ID" name="hidMINIS_ID" value="">
+
+
+
+</form>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrProvinceHidden" value="810000:กระบี่|100000:กรุงเทพมหานคร|710000:กาญจนบุรี|460000:กาฬสินธุ์|620000:กำแพงเพชร|400000:ขอนแก่น|220000:จันทบุรี|240000:ฉะเชิงเทรา|200000:ชลบุรี|180000:ชัยนาท|360000:ชัยภูมิ|860000:ชุมพร|570000:เชียงราย|500000:เชียงใหม่|920000:ตรัง|230000:ตราด|630000:ตาก|260000:นครนายก|730000:นครปฐม|480000:นครพนม|300000:นครราชสีมา|800000:นครศรีธรรมราช|600000:นครสวรรค์|120000:นนทบุรี|960000:นราธิวาส|550000:น่าน|380000:บึงกาฬ|310000:บุรีรัมย์|130000:ปทุมธานี|770000:ประจวบคีรีขันธ์|250000:ปราจีนบุรี|940000:ปัตตานี|140000:พระนครศรีอยุธยา|560000:พะเยา|820000:พังงา|930000:พัทลุง|660000:พิจิตร|650000:พิษณุโลก|760000:เพชรบุรี|670000:เพชรบูรณ์|540000:แพร่|830000:ภูเก็ต|440000:มหาสารคาม|490000:มุกดาหาร|580000:แม่ฮ่องสอน|350000:ยโสธร|950000:ยะลา|450000:ร้อยเอ็ด|850000:ระนอง|210000:ระยอง|700000:ราชบุรี|160000:ลพบุรี|520000:ลำปาง|510000:ลำพูน|420000:เลย|330000:ศรีสะเกษ|470000:สกลนคร|900000:สงขลา|910000:สตูล|110000:สมุทรปราการ|750000:สมุทรสงคราม|740000:สมุทรสาคร|270000:สระแก้ว|190000:สระบุรี|170000:สิงห์บุรี|640000:สุโขทัย|720000:สุพรรณบุรี|840000:สุราษฎร์ธานี|320000:สุรินทร์|430000:หนองคาย|390000:หนองบัวลำภู|150000:อ่างทอง|370000:อำนาจเจริญ|410000:อุดรธานี|530000:อุตรดิตถ์|610000:อุทัยธานี|340000:อุบลราชธานี">
+<input type="hidden" id="moiCodeHidden" value="">
+<script>
+	var provinceName;
+	var amperName;
+	var tambolName;
+
+	function refreshProvinceList(provinceName,amperName,tambolName,moiCode){
+		this.provinceName = provinceName;
+		this.amperName = amperName;
+		this.tambolName = tambolName;
+		if(moiCode != 'undefined'){
+			document.getElementById("moiCodeHidden").value = moiCode;
+		}
+		updateProvinceList();
+	}
+	
+	function updateProvinceList(){
+		clearProvinceList();
+		var province = document.getElementById(this.provinceName);
+		
+		var moiCode = document.getElementById("moiCodeHidden").value;
+		if(moiCode != ""){
+			moiCode = moiCode.substring(0,2)+"0000";
+		}
+		
+		var results = document.getElementById("arrProvinceHidden").value;
+		//results = results.substring(results.indexOf("P")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == moiCode){
+				option.selected = "selected";
+			}
+			province.appendChild(option);
+		}
+		
+		if (document.getElementById(this.amperName) != null) {
+			refreshAmperList(provinceName,amperName,tambolName);
+		}
+	}
+
+	function clearProvinceList(){
+		var province = document.getElementById(this.provinceName);
+		while(province.childNodes.length > 0){
+			province.removeChild(province.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกจังหวัด>"));
+		option.value = "";
+		province.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+<input type="hidden" id="arrProvinceHidden2" value="810000:กระบี่|100000:กรุงเทพมหานคร|710000:กาญจนบุรี|460000:กาฬสินธุ์|620000:กำแพงเพชร|400000:ขอนแก่น|220000:จันทบุรี|240000:ฉะเชิงเทรา|200000:ชลบุรี|180000:ชัยนาท|360000:ชัยภูมิ|860000:ชุมพร|570000:เชียงราย|500000:เชียงใหม่|920000:ตรัง|230000:ตราด|630000:ตาก|260000:นครนายก|730000:นครปฐม|480000:นครพนม|300000:นครราชสีมา|800000:นครศรีธรรมราช|600000:นครสวรรค์|120000:นนทบุรี|960000:นราธิวาส|550000:น่าน|380000:บึงกาฬ|310000:บุรีรัมย์|130000:ปทุมธานี|770000:ประจวบคีรีขันธ์|250000:ปราจีนบุรี|940000:ปัตตานี|140000:พระนครศรีอยุธยา|560000:พะเยา|820000:พังงา|930000:พัทลุง|660000:พิจิตร|650000:พิษณุโลก|760000:เพชรบุรี|670000:เพชรบูรณ์|540000:แพร่|830000:ภูเก็ต|440000:มหาสารคาม|490000:มุกดาหาร|580000:แม่ฮ่องสอน|350000:ยโสธร|950000:ยะลา|450000:ร้อยเอ็ด|850000:ระนอง|210000:ระยอง|700000:ราชบุรี|160000:ลพบุรี|520000:ลำปาง|510000:ลำพูน|420000:เลย|330000:ศรีสะเกษ|470000:สกลนคร|900000:สงขลา|910000:สตูล|110000:สมุทรปราการ|750000:สมุทรสงคราม|740000:สมุทรสาคร|270000:สระแก้ว|190000:สระบุรี|170000:สิงห์บุรี|640000:สุโขทัย|720000:สุพรรณบุรี|840000:สุราษฎร์ธานี|320000:สุรินทร์|430000:หนองคาย|390000:หนองบัวลำภู|150000:อ่างทอง|370000:อำนาจเจริญ|410000:อุดรธานี|530000:อุตรดิตถ์|610000:อุทัยธานี|340000:อุบลราชธานี">
+<input type="hidden" id="moiCodeHidden2" value="">
+<script>
+	var provinceName2;
+	var amperName2;
+	var tambolName2;
+
+	function refreshProvinceList2(provinceName,amperName,tambolName,moiCode){
+		this.provinceName2 = provinceName;
+		this.amperName2 = amperName;
+		this.tambolName2 = tambolName;
+		if(moiCode != 'undefined'){
+			document.getElementById("moiCodeHidden2").value = moiCode;
+		}
+		updateProvinceList2();
+	}
+	
+	function updateProvinceList2(){
+		clearProvinceList2();
+		var province = document.getElementById(this.provinceName2);
+		
+		var moiCode = document.getElementById("moiCodeHidden2").value;
+		if(moiCode != ""){
+			moiCode = moiCode.substring(0,2)+"0000";
+		}
+		
+		var results = document.getElementById("arrProvinceHidden2").value;
+		//results = results.substring(results.indexOf("P")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == moiCode){
+				option.selected = "selected";
+			}
+			province.appendChild(option);
+		}
+
+		refreshAmperList2(provinceName2,amperName2,tambolName2);
+	}
+
+	function clearProvinceList2(){
+		var province = document.getElementById(this.provinceName2);
+		while(province.childNodes.length > 0){
+			province.removeChild(province.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกจังหวัด>"));
+		option.value = "";
+		province.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrOrgHidden" value="1:ส่วนราชการ|2:รัฐวิสาหกิจ|3:องค์การมหาชน|4:หน่วยงานของรัฐที่ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวงหรือทบวง|5:องค์กรอิสระตามรัฐธรรมนูญ|6:องค์กรปกครองส่วนท้องถิ่น|7:หน่วยงานอื่นๆ">
+<script>
+	var orgName;
+	var orgUnitName;
+	var orgId;
+	
+	// change org
+	function refreshOrgList(orgName,orgUnitName,orgId,orgUnitId){
+		this.orgName = orgName;
+		this.orgUnitName = orgUnitName;
+		if(orgId == 'undefined'){
+			orgId = "";
+		}
+		this.orgId = orgId;
+
+		updateOrgList();
+	}
+	
+	function updateOrgList(){
+		clearOrgList();
+		var org = document.getElementById(this.orgName);
+		//var orgId = document.getElementById("orgIdHidden").value;
+		var results = document.getElementById("arrOrgHidden").value;
+		//results = results.substring(results.indexOf("O")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == this.orgId){
+				option.selected = "selected";
+			}
+			org.appendChild(option);
+		}
+		refreshOrgUnitList(orgName,orgUnitName);
+	}
+
+	function clearOrgList(){
+		var org = document.getElementById(this.orgName);
+		while(org.childNodes.length > 0){
+			org.removeChild(org.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกประเภทหน่วยงานภาครัฐ>"));
+		option.value = "";
+		org.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrGrpHidden" value="1:ทั่วไป|2:วิชาการ|3:อำนวยการ|4:บริหาร">
+<script>
+	var grpName;
+	var grpSubName;
+	var grpId;
+	
+	// change grp
+	function refreshGrpList(grpName,grpSubName,grpId){
+		this.grpName = grpName;
+		this.grpSubName = grpSubName;
+
+		if(grpId == 'undefined'){
+			grpId = "";
+		}
+		this.grpId = grpId
+
+		updateGrpList();
+	}
+	
+	function updateGrpList(){
+		clearGrpList();
+		var grp = document.getElementById(this.grpName);
+		//var grpId = document.getElementById("grpIdHidden").value;
+		var results = document.getElementById("arrGrpHidden").value;
+		//results = results.substring(results.indexOf("G")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == this.grpId){
+				option.selected = "selected";
+			}
+			grp.appendChild(option);
+		}
+		refreshGrpSubList(grpName,grpSubName);
+	}
+
+	function clearGrpList(){
+		var grp = document.getElementById(this.grpName);
+		while(grp.childNodes.length > 0){
+			grp.removeChild(grp.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกกลุ่ม>"));
+		option.value = "";
+		grp.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrDeptHidden" value="01:สำนักนายกรัฐมนตรี:1:1|02:กระทรวงกลาโหม:1:1|03:กระทรวงการคลัง:1:1|04:กระทรวงการต่างประเทศ:1:1|05:กระทรวงการท่องเที่ยวและกีฬา:1:1|06:กระทรวงพัฒนาสังคมและความมั่นคงของมนุษย์:1:1|07:กระทรวงเกษตรและสหกรณ์:1:1|08:กระทรวงคมนาคม:1:1|09:กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม:1:1|11:กระทรวงเทคโนโลยีสารสนเทศและการสื่อสาร:1:1|12:กระทรวงพลังงาน:1:1|13:กระทรวงพาณิชย์:1:1|15:กระทรวงมหาดไทย:1:1|16:กระทรวงยุติธรรม:1:1|17:กระทรวงแรงงาน:1:1|18:กระทรวงวัฒนธรรม:1:1|19:กระทรวงวิทยาศาสตร์และเทคโนโลยี:1:1|20:กระทรวงศึกษาธิการ:1:1|21:กระทรวงสาธารณสุข:1:1|22:กระทรวงอุตสาหกรรม:1:1|25:หน่วยงานของรัฐที่ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวงหรือทบวง:4:1|26:องค์กรอิสระตามรัฐธรรมนูญ:5:1">
+<script>
+	var deptName;
+	var deptId;
+	var s_orgId;
+	var s_orgUnitId;
+	
+	function refreshMinisList(deptName,deptId,orgId,orgUnitId){
+		this.deptName = deptName;
+		if(deptId == 'undefined'){
+			deptId = "";
+		}
+		this.deptId = deptId;
+		this.s_orgId = orgId;
+		this.s_orgUnitId = orgUnitId;
+
+		updateMinisList();
+	}
+	
+	function updateMinisList(){
+		clearMinisList();
+		var dept = document.getElementById(this.deptName);
+		var results = document.getElementById("arrDeptHidden").value;
+		var option = null;
+		var tempFlag;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			if(t[2] == s_orgId && t[3] == s_orgUnitId){
+				tempFlag = "T";
+				option = document.createElement("option");
+				option.appendChild(document.createTextNode(t[1]));
+				option.value = t[0];
+				if(t[0] == this.deptId){
+					option.selected = "selected";
+				}
+				dept.appendChild(option);
+			}
+		}
+		
+	}
+
+	function clearMinisList(){
+		var dept = document.getElementById(this.deptName);
+		while(dept.childNodes.length > 0){
+			dept.removeChild(dept.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกกระทรวง>"));
+		option.value = "";
+		dept.appendChild(option);
+	}
+</script>
+
+</body>
+</html>
+  

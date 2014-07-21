@@ -1,0 +1,1010 @@
+
+
+
+
+
+
+
+
+
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=TIS-620">
+  <title>รหัสหน่วยงาน</title>
+  <link type="text/css" rel="StyleSheet" href="/EGPWeb/style/agc/main.css" />
+  <script type="text/javascript" language="JavaScript1.2" src="/EGPWeb/js/provinceAjaxHelp.js"></script>
+  <script type="text/javascript" src="/EGPWeb/js/AgencyErrorWarning.js"></script>
+  <script type="text/javascript" src="/EGPWeb/js/commonJS.js"></script>
+  <script language="JavaScript">
+	
+	function clickDept(deptid){
+		window.returnValue=deptid;
+		window.close();
+	}
+	
+	function setOnload() {
+		var f1 = document.form1;
+		refreshOrgList('ORG_ID','ORG_UNIT_ID','1');
+		refreshOrgUnitList('ORG_ID','ORG_UNIT_ID','3');
+		refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+		refreshAmperList('PROV_ID','AMP_ID','MOI_ID');
+		refreshTambolList('PROV_ID','AMP_ID','MOI_ID');
+		refreshMinisList('MINISTRY_CODE','','1','3');
+		
+		if(f1.hidPROV_ID.value!="" && f1.hidAMP_ID.value=="" && f1.hidMOI_ID.value==""){/// ค้นหา จังหวัด
+			refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+		}else if(f1.hidAMP_ID.value!="" && f1.hidMOI_ID.value==""){/// ค้นหา จังหวัด อำเภอ
+			refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+			refreshAmperListSelect('PROV_ID','AMP_ID','MOI_ID','');
+		}
+	}
+	
+	function clickClear() {
+		var f1 = document.form1;
+		f1.ORG_ID.disabled=false;
+		f1.ORG_UNIT_ID.disabled=false;
+		f1.QUERY_TYPE.value="";
+		f1.QUERY.value="";
+		f1.PROV_ID.value="";
+		f1.AMP_ID.value="";
+		f1.MOI_ID.value="";
+		f1.MINISTRY_CODE.value="";
+		f1.QUERY_TYPE[0].checked=false;
+		f1.QUERY_TYPE[1].checked=false;
+		f1.submit();
+	}
+	
+	function clickSearch() {
+		var f1 = document.form1;
+		
+		if (f1.QUERY_TYPE[0].checked || f1.QUERY_TYPE[1].checked) {
+			if (f1.QUERY.value.length < 4) {
+				alert(showMessage(E1001)+"รหัส/ชื่อหน่วยงาน อย่างน้อย 4 ตัวอักษร");
+				f1.QUERY.focus();
+				return false;
+			}
+		} else {
+			if (f1.QUERY.value != "") {
+				alert(showMessage(E1001)+" ค้นหาจาก รหัสหรือชื่อหน่วยงาน");
+				f1.QUERY_TYPE[0].focus();
+				return false;
+			}
+		}
+		
+		f1.ORG_ID.disabled=false;
+		f1.ORG_UNIT_ID.disabled=false;
+
+		f1.flag.value="SEARCH";
+//		action="./FAGN0103H.jsp";
+		f1.action="control.egp";
+		f1.submit();
+		
+		
+	}
+
+  </script>
+ </head>
+ <base target="_parent">
+<body onLoad="setOnload()" bgcolor="#ffffff" style="background-image: url('')">
+<form name="form1" method="POST" >
+<table width="750" border="0" cellspacing="1" cellpadding="2" align="center" >
+	<tr class="trBlue">
+		<td colspan="2" align="left">
+			&nbsp;<span class="blue">&nbsp;<b>รหัสหน่วยงาน</b></span>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right" width="225"> ประเภทหน่วยงานภาครัฐ&nbsp;</td>
+		<td>&nbsp;
+			<select id="ORG_ID" name="ORG_ID" class="selCommon" disabled></select>
+			<input type="hidden" id="ORG_NAME" name="ORG_NAME" class="txtDisabled" value="1" readonly>
+			<input type="hidden" id="" name="" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right">ประเภทย่อยหน่วยงานภาครัฐ&nbsp;</td>
+		<td>&nbsp;
+			<select id="ORG_UNIT_ID" name="ORG_UNIT_ID" class="selCommon" disabled></select>
+			<input type="hidden" id="ORG_UNIT_NAME"  name="ORG_UNIT_NAME" class="txtDisabled" value="" readonly>
+			<input type="hidden" id="" name="" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right">ค้นหาจาก&nbsp;</td>
+		<td>&nbsp;
+			<input type="radio" id="QUERY_TYPE"  name="QUERY_TYPE" value="I" onClick="" 
+				> รหัสหน่วยงาน
+			<input type="radio" id="QUERY_TYPE" name="QUERY_TYPE" value="N" onClick="" 
+				> ชื่อหน่วยงาน
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> ระบุรหัส/ชื่อหน่วยงาน&nbsp;</td>
+		<td>&nbsp;
+			<input type="text" id="QUERY"  name="QUERY" class="txtCommon" size="50" maxlength="100" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> จังหวัด&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="PROV_ID" name="PROV_ID" onChange="refreshAmperList('PROV_ID','AMP_ID','MOI_ID')"></select>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> อำเภอ/เขต&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="AMP_ID" name="AMP_ID" onChange="refreshTambolList('PROV_ID','AMP_ID','MOI_ID')"></select>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> ตำบล/แขวง&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="MOI_ID" name="MOI_ID"></select>
+		</td>
+	</tr>	
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> กระทรวง&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="MINISTRY_CODE" name="MINISTRY_CODE"></select>
+		</td>
+	</tr>	
+	<tr class="trGray">
+		<td colspan="2" align="center">
+			<input type="button" id="SEARCH" name="SEARCH" class="btnCommon"  value="ค้นหา" onClick="clickSearch()"
+				style="background: url('/EGPWeb/images/agc/btnBlue100.gif'); width: 100px; height: 25px;">
+			<input type="button" id="CLEAR"  name="CLEAR" class="btnCommon"  value="ล้างตัวเลือก" onClick="clickClear()"
+				style="background: url('/EGPWeb/images/agc/btnBlue100.gif'); width: 100px; height: 25px;">
+		</td>
+	</tr>
+
+	<tr class="trBlue" style="height: 22px;">
+		<td colspan="" align="center">
+			&nbsp;<span class="blue">&nbsp;รหัสหน่วยงาน</span>
+		</td>
+		<td colspan="" align="center">
+			&nbsp;<span class="blue">&nbsp;ชื่อหน่วยงาน</span>
+		</td>
+	</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" >
+<tr><td>
+
+<div style="width:100%; height:283; overflow:auto;">
+<table width="100%" border="0" cellspacing="1" cellpadding="2" align="center" >
+
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('002134400')">002134400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('002134400')">ศูนย์สุขภาพชุมชนคำข่า</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('002214300')">002214300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('002214300')">โรงพยาบาลดอนไพล</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('001528200')">001528200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('001528200')">ศูนย์สุขภาพชุมชนประชาอุทิศ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('001511000')">001511000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('001511000')">ศูนย์สุขภาพชุมชนเมืองสงขลา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185000')">000185000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองตาอุ่น</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185100')">000185100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185100')">โรงพยาบาลส่งเสริมสุขภาพตำบลเขาไม้แก้ว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185200')">000185200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185200')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยใหญ่ หมู่ ๓</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185300')">000185300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185300')">โรงพยาบาลส่งเสริมสุขภาพตำบลห้วยใหญ่ บ้านซากแง้ว หมู่ที่ ๑๐</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185400')">000185400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185400')">โรงพยาบาลส่งเสริมสุขภาพตำบลตะเคียนเตี้ย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185500')">000185500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185500')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเกาะล้าน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185600')">000185600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185600')">โรงพยาบาลส่งเสริมสุขภาพตำบลหนองตำลึง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185700')">000185700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185700')">โรงพยาบาลส่งเสริมสุขภาพตำบลมาบโป่ง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185800')">000185800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185800')">โรงพยาบาลส่งเสริมสุขภาพตำบลหนองกะขะ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000185900')">000185900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000185900')">โรงพยาบาลส่งเสริมสุขภาพตำบลหนองหงษ์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186000')">000186000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186000')">โรงพยาบาลส่งเสริมสุขภาพตำบลโคกขี้หนอน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186100')">000186100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเก่า</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186200')">000186200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186200')">โรงพยาบาลส่งเสริมสุขภาพตำบลหน้าประดู่</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186300')">000186300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186300')">โรงพยาบาลส่งเสริมสุขภาพตำบลบางนาง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186400')">000186400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186400')">โรงพยาบาลส่งเสริมสุขภาพตำบลเกาะลอย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186500')">000186500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186500')">โรงพยาบาลส่งเสริมสุขภาพตำบลบางหัก</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186600')">000186600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186600')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านใหม่เชิงเนิน ตำบลหน้าพระธาตุ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186700')">000186700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186700')">โรงพยาบาลส่งเสริมสุขภาพตำบลวัดหลวง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186800')">000186800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186800')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเซิด</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000186900')">000186900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000186900')">โรงพยาบาลส่งเสริมสุขภาพตำบลนาเริก</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187000')">000187000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเนินแร่ ตำบลนาเริก</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187100')">000187100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองไทร ตำบลหมอนนาง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187200')">000187200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187200')">โรงพยาบาลส่งเสริมสุขภาพตำบลหมอนนาง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187300')">000187300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187300')">โรงพยาบาลส่งเสริมสุขภาพตำบลสระสี่เหลี่ยม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187400')">000187400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187400')">โรงพยาบาลส่งเสริมสุขภาพตำบลวัดโบสถ์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187500')">000187500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187500')">โรงพยาบาลส่งเสริมสุขภาพตำบลหัวถนน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187600')">000187600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187600')">โรงพยาบาลส่งเสริมสุขภาพตำบลท่าข้าม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187700')">000187700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187700')">โรงพยาบาลส่งเสริมสุขภาพตำบลหนองปรือ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187800')">000187800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187800')">โรงพยาบาลส่งเสริมสุขภาพตำบลหนองขยาด</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000187900')">000187900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000187900')">โรงพยาบาลส่งเสริมสุขภาพตำบลทุ่งขวาง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188000')">000188000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188000')">โรงพยาบาลส่งเสริมสุขภาพตำบลหนองเหียง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188100')">000188100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านไร่เสธ์ ตำบลหนองเหียง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188200')">000188200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188200')">โรงพยาบาลส่งเสริมสุขภาพตำบลนาวังหิน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188300')">000188300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188300')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านสวนผัก ตำบลบ้านช้าง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188400')">000188400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188400')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเนินตามาก ตำบลโคกเพลาะ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188500')">000188500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188500')">โรงพยาบาลส่งเสริมสุขภาพตำบลไร่หลักทอง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188600')">000188600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188600')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยสูบ ตำบลนามะตูม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188700')">000188700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188700')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านนาพร้าว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000188900')">000188900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000188900')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านตลาดบึง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189000')">000189000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองค้อ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189100')">000189100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านโค้งดารา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189200')">000189200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189200')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหุบบอน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('002128900')">002128900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('002128900')">ศูนย์สุขภาพชุมชนบ้านห้วยโจด</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189400')">000189400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189400')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านตลาดล่างบางพระ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189500')">000189500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189500')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยกุ่ม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189600')">000189600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189600')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยกรุ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189700')">000189700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189700')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านบ่อวิน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189800')">000189800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189800')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขาหิน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000189900')">000189900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000189900')">โรงพยาบาลส่งเสริมสุขภาพตำบลเตาถ่าน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190000')">000190000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190000')">โรงพยาบาลส่งเสริมสุขภาพตำบลเขาคันธมาทน์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190100')">000190100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190100')">โรงพยาบาลส่งเสริมสุขภาพตำบลนาจอมเทียน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190200')">000190200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190200')">โรงพยาบาลส่งเสริมสุขภาพตำบลบางเสร่</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190300')">000190300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190300')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านช่องแสมสาร</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190400')">000190400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190400')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านทับเจริญ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190500')">000190500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190500')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านซ่อง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190600')">000190600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190600')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองเสม็ด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190700')">000190700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190700')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านปักมึน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190800')">000190800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190800')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านโปร่งเกตุ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000190900')">000190900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000190900')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านบึงตะกู</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191000')">000191000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านธรรมรัตน์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191100')">000191100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านอ่างกระพงศ์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191200')">000191200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191200')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขาชอางค์</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191300')">000191300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191300')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขาใหญ่</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191400')">000191400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191400')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านคลองตาเพชร</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191500')">000191500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191500')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองชุมเห็ด</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191600')">000191600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191600')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านปรกฟ้า</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191700')">000191700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191700')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเกาะโพธิ์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191800')">000191800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191800')">โรงพยาบาลส่งเสริมสุขภาพตำบลท่าบุญมี</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000191900')">000191900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000191900')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองจอก</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192000')">000192000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านดอน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192100')">000192100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านยายดา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192200')">000192200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192200')">โรงพยาบาลส่งเสริมสุขภาพตำบลตะพง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192300')">000192300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192300')">โรงพยาบาลส่งเสริมสุขภาพตำบลเพ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192400')">000192400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192400')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเกาะเสม็ด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192500')">000192500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192500')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขายายชุม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192600')">000192600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192600')">โรงพยาบาลส่งเสริมสุขภาพตำบลแกลง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192700')">000192700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192700')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านก้นหนอง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192800')">000192800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192800')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านแลง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000192900')">000192900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000192900')">โรงพยาบาลส่งเสริมสุขภาพตำบลนาตาขวัญ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193000')">000193000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขาวังม่าน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193100')">000193100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193100')">โรงพยาบาลส่งเสริมสุขภาพตำบลเนินพระ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193200')">000193200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193200')">โรงพยาบาลส่งเสริมสุขภาพตำบลกะเฉด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193300')">000193300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193300')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านสมานมิตร</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193400')">000193400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193400')">โรงพยาบาลส่งเสริมสุขภาพตำบลทับมา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193500')">000193500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193500')">โรงพยาบาลส่งเสริมสุขภาพตำบลน้ำคอก</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193600')">000193600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193600')">โรงพยาบาลส่งเสริมสุขภาพตำบลมาบตาพุด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193700')">000193700</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193700')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านยายจั่น</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193800')">000193800</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193800')">โรงพยาบาลส่งเสริมสุขภาพตำบลสำนักท้อน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000193900')">000193900</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000193900')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านชากหมาก</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194000')">000194000</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194000')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านสระแก้ว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194100')">000194100</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194100')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านคลองบางไผ่</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194200')">000194200</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194200')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านยายร้า</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194300')">000194300</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194300')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขาครอก</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194400')">000194400</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194400')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านหนองน้ำเย็น</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194500')">000194500</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194500')">โรงพยาบาลส่งเสริมสุขภาพตำบลพลา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('000194600')">000194600</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('000194600')">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านพะยูน</a></td>
+	</tr>
+
+</table>
+</div>
+
+</td></tr></table>
+
+<input type="hidden" id="flag"      name="flag" value="SEARCH %>">
+<input type="hidden" id="servlet"   name="servlet" value="gojsp">
+<input type="hidden" id="proc_id"   name="proc_id" value="FAGN0103H">
+<input type="hidden" id="proc_name" name="proc_name" value="Agency">
+<input type="hidden" id="url"       name="url" value="agc/">
+
+<input type="hidden" id="hidPROV_ID"  name="hidPROV_ID" value="">
+<input type="hidden" id="hidAMP_ID"   name="hidAMP_ID" value="">
+<input type="hidden" id="hidMOI_ID"   name="hidMOI_ID" value="">
+<input type="hidden" id="hidMINIS_ID" name="hidMINIS_ID" value="">
+
+
+
+</form>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrProvinceHidden" value="810000:กระบี่|100000:กรุงเทพมหานคร|710000:กาญจนบุรี|460000:กาฬสินธุ์|620000:กำแพงเพชร|400000:ขอนแก่น|220000:จันทบุรี|240000:ฉะเชิงเทรา|200000:ชลบุรี|180000:ชัยนาท|360000:ชัยภูมิ|860000:ชุมพร|570000:เชียงราย|500000:เชียงใหม่|920000:ตรัง|230000:ตราด|630000:ตาก|260000:นครนายก|730000:นครปฐม|480000:นครพนม|300000:นครราชสีมา|800000:นครศรีธรรมราช|600000:นครสวรรค์|120000:นนทบุรี|960000:นราธิวาส|550000:น่าน|380000:บึงกาฬ|310000:บุรีรัมย์|130000:ปทุมธานี|770000:ประจวบคีรีขันธ์|250000:ปราจีนบุรี|940000:ปัตตานี|140000:พระนครศรีอยุธยา|560000:พะเยา|820000:พังงา|930000:พัทลุง|660000:พิจิตร|650000:พิษณุโลก|760000:เพชรบุรี|670000:เพชรบูรณ์|540000:แพร่|830000:ภูเก็ต|440000:มหาสารคาม|490000:มุกดาหาร|580000:แม่ฮ่องสอน|350000:ยโสธร|950000:ยะลา|450000:ร้อยเอ็ด|850000:ระนอง|210000:ระยอง|700000:ราชบุรี|160000:ลพบุรี|520000:ลำปาง|510000:ลำพูน|420000:เลย|330000:ศรีสะเกษ|470000:สกลนคร|900000:สงขลา|910000:สตูล|110000:สมุทรปราการ|750000:สมุทรสงคราม|740000:สมุทรสาคร|270000:สระแก้ว|190000:สระบุรี|170000:สิงห์บุรี|640000:สุโขทัย|720000:สุพรรณบุรี|840000:สุราษฎร์ธานี|320000:สุรินทร์|430000:หนองคาย|390000:หนองบัวลำภู|150000:อ่างทอง|370000:อำนาจเจริญ|410000:อุดรธานี|530000:อุตรดิตถ์|610000:อุทัยธานี|340000:อุบลราชธานี">
+<input type="hidden" id="moiCodeHidden" value="">
+<script>
+	var provinceName;
+	var amperName;
+	var tambolName;
+
+	function refreshProvinceList(provinceName,amperName,tambolName,moiCode){
+		this.provinceName = provinceName;
+		this.amperName = amperName;
+		this.tambolName = tambolName;
+		if(moiCode != 'undefined'){
+			document.getElementById("moiCodeHidden").value = moiCode;
+		}
+		updateProvinceList();
+	}
+	
+	function updateProvinceList(){
+		clearProvinceList();
+		var province = document.getElementById(this.provinceName);
+		
+		var moiCode = document.getElementById("moiCodeHidden").value;
+		if(moiCode != ""){
+			moiCode = moiCode.substring(0,2)+"0000";
+		}
+		
+		var results = document.getElementById("arrProvinceHidden").value;
+		//results = results.substring(results.indexOf("P")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == moiCode){
+				option.selected = "selected";
+			}
+			province.appendChild(option);
+		}
+		
+		if (document.getElementById(this.amperName) != null) {
+			refreshAmperList(provinceName,amperName,tambolName);
+		}
+	}
+
+	function clearProvinceList(){
+		var province = document.getElementById(this.provinceName);
+		while(province.childNodes.length > 0){
+			province.removeChild(province.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกจังหวัด>"));
+		option.value = "";
+		province.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+<input type="hidden" id="arrProvinceHidden2" value="810000:กระบี่|100000:กรุงเทพมหานคร|710000:กาญจนบุรี|460000:กาฬสินธุ์|620000:กำแพงเพชร|400000:ขอนแก่น|220000:จันทบุรี|240000:ฉะเชิงเทรา|200000:ชลบุรี|180000:ชัยนาท|360000:ชัยภูมิ|860000:ชุมพร|570000:เชียงราย|500000:เชียงใหม่|920000:ตรัง|230000:ตราด|630000:ตาก|260000:นครนายก|730000:นครปฐม|480000:นครพนม|300000:นครราชสีมา|800000:นครศรีธรรมราช|600000:นครสวรรค์|120000:นนทบุรี|960000:นราธิวาส|550000:น่าน|380000:บึงกาฬ|310000:บุรีรัมย์|130000:ปทุมธานี|770000:ประจวบคีรีขันธ์|250000:ปราจีนบุรี|940000:ปัตตานี|140000:พระนครศรีอยุธยา|560000:พะเยา|820000:พังงา|930000:พัทลุง|660000:พิจิตร|650000:พิษณุโลก|760000:เพชรบุรี|670000:เพชรบูรณ์|540000:แพร่|830000:ภูเก็ต|440000:มหาสารคาม|490000:มุกดาหาร|580000:แม่ฮ่องสอน|350000:ยโสธร|950000:ยะลา|450000:ร้อยเอ็ด|850000:ระนอง|210000:ระยอง|700000:ราชบุรี|160000:ลพบุรี|520000:ลำปาง|510000:ลำพูน|420000:เลย|330000:ศรีสะเกษ|470000:สกลนคร|900000:สงขลา|910000:สตูล|110000:สมุทรปราการ|750000:สมุทรสงคราม|740000:สมุทรสาคร|270000:สระแก้ว|190000:สระบุรี|170000:สิงห์บุรี|640000:สุโขทัย|720000:สุพรรณบุรี|840000:สุราษฎร์ธานี|320000:สุรินทร์|430000:หนองคาย|390000:หนองบัวลำภู|150000:อ่างทอง|370000:อำนาจเจริญ|410000:อุดรธานี|530000:อุตรดิตถ์|610000:อุทัยธานี|340000:อุบลราชธานี">
+<input type="hidden" id="moiCodeHidden2" value="">
+<script>
+	var provinceName2;
+	var amperName2;
+	var tambolName2;
+
+	function refreshProvinceList2(provinceName,amperName,tambolName,moiCode){
+		this.provinceName2 = provinceName;
+		this.amperName2 = amperName;
+		this.tambolName2 = tambolName;
+		if(moiCode != 'undefined'){
+			document.getElementById("moiCodeHidden2").value = moiCode;
+		}
+		updateProvinceList2();
+	}
+	
+	function updateProvinceList2(){
+		clearProvinceList2();
+		var province = document.getElementById(this.provinceName2);
+		
+		var moiCode = document.getElementById("moiCodeHidden2").value;
+		if(moiCode != ""){
+			moiCode = moiCode.substring(0,2)+"0000";
+		}
+		
+		var results = document.getElementById("arrProvinceHidden2").value;
+		//results = results.substring(results.indexOf("P")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == moiCode){
+				option.selected = "selected";
+			}
+			province.appendChild(option);
+		}
+
+		refreshAmperList2(provinceName2,amperName2,tambolName2);
+	}
+
+	function clearProvinceList2(){
+		var province = document.getElementById(this.provinceName2);
+		while(province.childNodes.length > 0){
+			province.removeChild(province.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกจังหวัด>"));
+		option.value = "";
+		province.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrOrgHidden" value="1:ส่วนราชการ|2:รัฐวิสาหกิจ|3:องค์การมหาชน|4:หน่วยงานของรัฐที่ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวงหรือทบวง|5:องค์กรอิสระตามรัฐธรรมนูญ|6:องค์กรปกครองส่วนท้องถิ่น|7:หน่วยงานอื่นๆ">
+<script>
+	var orgName;
+	var orgUnitName;
+	var orgId;
+	
+	// change org
+	function refreshOrgList(orgName,orgUnitName,orgId,orgUnitId){
+		this.orgName = orgName;
+		this.orgUnitName = orgUnitName;
+		if(orgId == 'undefined'){
+			orgId = "";
+		}
+		this.orgId = orgId;
+
+		updateOrgList();
+	}
+	
+	function updateOrgList(){
+		clearOrgList();
+		var org = document.getElementById(this.orgName);
+		//var orgId = document.getElementById("orgIdHidden").value;
+		var results = document.getElementById("arrOrgHidden").value;
+		//results = results.substring(results.indexOf("O")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == this.orgId){
+				option.selected = "selected";
+			}
+			org.appendChild(option);
+		}
+		refreshOrgUnitList(orgName,orgUnitName);
+	}
+
+	function clearOrgList(){
+		var org = document.getElementById(this.orgName);
+		while(org.childNodes.length > 0){
+			org.removeChild(org.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกประเภทหน่วยงานภาครัฐ>"));
+		option.value = "";
+		org.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrGrpHidden" value="1:ทั่วไป|2:วิชาการ|3:อำนวยการ|4:บริหาร">
+<script>
+	var grpName;
+	var grpSubName;
+	var grpId;
+	
+	// change grp
+	function refreshGrpList(grpName,grpSubName,grpId){
+		this.grpName = grpName;
+		this.grpSubName = grpSubName;
+
+		if(grpId == 'undefined'){
+			grpId = "";
+		}
+		this.grpId = grpId
+
+		updateGrpList();
+	}
+	
+	function updateGrpList(){
+		clearGrpList();
+		var grp = document.getElementById(this.grpName);
+		//var grpId = document.getElementById("grpIdHidden").value;
+		var results = document.getElementById("arrGrpHidden").value;
+		//results = results.substring(results.indexOf("G")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == this.grpId){
+				option.selected = "selected";
+			}
+			grp.appendChild(option);
+		}
+		refreshGrpSubList(grpName,grpSubName);
+	}
+
+	function clearGrpList(){
+		var grp = document.getElementById(this.grpName);
+		while(grp.childNodes.length > 0){
+			grp.removeChild(grp.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกกลุ่ม>"));
+		option.value = "";
+		grp.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrDeptHidden" value="01:สำนักนายกรัฐมนตรี:1:1|02:กระทรวงกลาโหม:1:1|03:กระทรวงการคลัง:1:1|04:กระทรวงการต่างประเทศ:1:1|05:กระทรวงการท่องเที่ยวและกีฬา:1:1|06:กระทรวงพัฒนาสังคมและความมั่นคงของมนุษย์:1:1|07:กระทรวงเกษตรและสหกรณ์:1:1|08:กระทรวงคมนาคม:1:1|09:กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม:1:1|11:กระทรวงเทคโนโลยีสารสนเทศและการสื่อสาร:1:1|12:กระทรวงพลังงาน:1:1|13:กระทรวงพาณิชย์:1:1|15:กระทรวงมหาดไทย:1:1|16:กระทรวงยุติธรรม:1:1|17:กระทรวงแรงงาน:1:1|18:กระทรวงวัฒนธรรม:1:1|19:กระทรวงวิทยาศาสตร์และเทคโนโลยี:1:1|20:กระทรวงศึกษาธิการ:1:1|21:กระทรวงสาธารณสุข:1:1|22:กระทรวงอุตสาหกรรม:1:1|25:หน่วยงานของรัฐที่ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวงหรือทบวง:4:1|26:องค์กรอิสระตามรัฐธรรมนูญ:5:1">
+<script>
+	var deptName;
+	var deptId;
+	var s_orgId;
+	var s_orgUnitId;
+	
+	function refreshMinisList(deptName,deptId,orgId,orgUnitId){
+		this.deptName = deptName;
+		if(deptId == 'undefined'){
+			deptId = "";
+		}
+		this.deptId = deptId;
+		this.s_orgId = orgId;
+		this.s_orgUnitId = orgUnitId;
+
+		updateMinisList();
+	}
+	
+	function updateMinisList(){
+		clearMinisList();
+		var dept = document.getElementById(this.deptName);
+		var results = document.getElementById("arrDeptHidden").value;
+		var option = null;
+		var tempFlag;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			if(t[2] == s_orgId && t[3] == s_orgUnitId){
+				tempFlag = "T";
+				option = document.createElement("option");
+				option.appendChild(document.createTextNode(t[1]));
+				option.value = t[0];
+				if(t[0] == this.deptId){
+					option.selected = "selected";
+				}
+				dept.appendChild(option);
+			}
+		}
+		
+	}
+
+	function clearMinisList(){
+		var dept = document.getElementById(this.deptName);
+		while(dept.childNodes.length > 0){
+			dept.removeChild(dept.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกกระทรวง>"));
+		option.value = "";
+		dept.appendChild(option);
+	}
+</script>
+
+</body>
+</html>
+  

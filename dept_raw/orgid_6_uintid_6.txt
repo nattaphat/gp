@@ -1,0 +1,1010 @@
+
+
+
+
+
+
+
+
+
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=TIS-620">
+  <title>รหัสหน่วยงาน</title>
+  <link type="text/css" rel="StyleSheet" href="/EGPWeb/style/agc/main.css" />
+  <script type="text/javascript" language="JavaScript1.2" src="/EGPWeb/js/provinceAjaxHelp.js"></script>
+  <script type="text/javascript" src="/EGPWeb/js/AgencyErrorWarning.js"></script>
+  <script type="text/javascript" src="/EGPWeb/js/commonJS.js"></script>
+  <script language="JavaScript">
+	
+	function clickDept(deptid){
+		window.returnValue=deptid;
+		window.close();
+	}
+	
+	function setOnload() {
+		var f1 = document.form1;
+		refreshOrgList('ORG_ID','ORG_UNIT_ID','6');
+		refreshOrgUnitList('ORG_ID','ORG_UNIT_ID','6');
+		refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+		refreshAmperList('PROV_ID','AMP_ID','MOI_ID');
+		refreshTambolList('PROV_ID','AMP_ID','MOI_ID');
+		refreshMinisList('MINISTRY_CODE','','6','6');
+		
+		if(f1.hidPROV_ID.value!="" && f1.hidAMP_ID.value=="" && f1.hidMOI_ID.value==""){/// ค้นหา จังหวัด
+			refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+		}else if(f1.hidAMP_ID.value!="" && f1.hidMOI_ID.value==""){/// ค้นหา จังหวัด อำเภอ
+			refreshProvinceList('PROV_ID','AMP_ID','MOI_ID','');
+			refreshAmperListSelect('PROV_ID','AMP_ID','MOI_ID','');
+		}
+	}
+	
+	function clickClear() {
+		var f1 = document.form1;
+		f1.ORG_ID.disabled=false;
+		f1.ORG_UNIT_ID.disabled=false;
+		f1.QUERY_TYPE.value="";
+		f1.QUERY.value="";
+		f1.PROV_ID.value="";
+		f1.AMP_ID.value="";
+		f1.MOI_ID.value="";
+		f1.MINISTRY_CODE.value="";
+		f1.QUERY_TYPE[0].checked=false;
+		f1.QUERY_TYPE[1].checked=false;
+		f1.submit();
+	}
+	
+	function clickSearch() {
+		var f1 = document.form1;
+		
+		if (f1.QUERY_TYPE[0].checked || f1.QUERY_TYPE[1].checked) {
+			if (f1.QUERY.value.length < 4) {
+				alert(showMessage(E1001)+"รหัส/ชื่อหน่วยงาน อย่างน้อย 4 ตัวอักษร");
+				f1.QUERY.focus();
+				return false;
+			}
+		} else {
+			if (f1.QUERY.value != "") {
+				alert(showMessage(E1001)+" ค้นหาจาก รหัสหรือชื่อหน่วยงาน");
+				f1.QUERY_TYPE[0].focus();
+				return false;
+			}
+		}
+		
+		f1.ORG_ID.disabled=false;
+		f1.ORG_UNIT_ID.disabled=false;
+
+		f1.flag.value="SEARCH";
+//		action="./FAGN0103H.jsp";
+		f1.action="control.egp";
+		f1.submit();
+		
+		
+	}
+
+  </script>
+ </head>
+ <base target="_parent">
+<body onLoad="setOnload()" bgcolor="#ffffff" style="background-image: url('')">
+<form name="form1" method="POST" >
+<table width="750" border="0" cellspacing="1" cellpadding="2" align="center" >
+	<tr class="trBlue">
+		<td colspan="2" align="left">
+			&nbsp;<span class="blue">&nbsp;<b>รหัสหน่วยงาน</b></span>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right" width="225"> ประเภทหน่วยงานภาครัฐ&nbsp;</td>
+		<td>&nbsp;
+			<select id="ORG_ID" name="ORG_ID" class="selCommon" disabled></select>
+			<input type="hidden" id="ORG_NAME" name="ORG_NAME" class="txtDisabled" value="6" readonly>
+			<input type="hidden" id="" name="" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right">ประเภทย่อยหน่วยงานภาครัฐ&nbsp;</td>
+		<td>&nbsp;
+			<select id="ORG_UNIT_ID" name="ORG_UNIT_ID" class="selCommon" disabled></select>
+			<input type="hidden" id="ORG_UNIT_NAME"  name="ORG_UNIT_NAME" class="txtDisabled" value="" readonly>
+			<input type="hidden" id="" name="" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right">ค้นหาจาก&nbsp;</td>
+		<td>&nbsp;
+			<input type="radio" id="QUERY_TYPE"  name="QUERY_TYPE" value="I" onClick="" 
+				> รหัสหน่วยงาน
+			<input type="radio" id="QUERY_TYPE" name="QUERY_TYPE" value="N" onClick="" 
+				> ชื่อหน่วยงาน
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> ระบุรหัส/ชื่อหน่วยงาน&nbsp;</td>
+		<td>&nbsp;
+			<input type="text" id="QUERY"  name="QUERY" class="txtCommon" size="50" maxlength="100" value="">
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> จังหวัด&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="PROV_ID" name="PROV_ID" onChange="refreshAmperList('PROV_ID','AMP_ID','MOI_ID')"></select>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> อำเภอ/เขต&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="AMP_ID" name="AMP_ID" onChange="refreshTambolList('PROV_ID','AMP_ID','MOI_ID')"></select>
+		</td>
+	</tr>
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> ตำบล/แขวง&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="MOI_ID" name="MOI_ID"></select>
+		</td>
+	</tr>	
+	<tr class="trGray">
+		<td align="right"><span class="star"></span> กระทรวง&nbsp;</td>
+		<td>&nbsp;
+			<select class="selCommon" id="MINISTRY_CODE" name="MINISTRY_CODE"></select>
+		</td>
+	</tr>	
+	<tr class="trGray">
+		<td colspan="2" align="center">
+			<input type="button" id="SEARCH" name="SEARCH" class="btnCommon"  value="ค้นหา" onClick="clickSearch()"
+				style="background: url('/EGPWeb/images/agc/btnBlue100.gif'); width: 100px; height: 25px;">
+			<input type="button" id="CLEAR"  name="CLEAR" class="btnCommon"  value="ล้างตัวเลือก" onClick="clickClear()"
+				style="background: url('/EGPWeb/images/agc/btnBlue100.gif'); width: 100px; height: 25px;">
+		</td>
+	</tr>
+
+	<tr class="trBlue" style="height: 22px;">
+		<td colspan="" align="center">
+			&nbsp;<span class="blue">&nbsp;รหัสหน่วยงาน</span>
+		</td>
+		<td colspan="" align="center">
+			&nbsp;<span class="blue">&nbsp;ชื่อหน่วยงาน</span>
+		</td>
+	</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" >
+<tr><td>
+
+<div style="width:100%; height:283; overflow:auto;">
+<table width="100%" border="0" cellspacing="1" cellpadding="2" align="center" >
+
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6110102')">6110102</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6110102')">องค์การบริหารส่วนตำบลแพรกษา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6461703')">6461703</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6461703')">องค์การบริหารส่วนตำบลดงพยุง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6461705')">6461705</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6461705')">องค์การบริหารส่วนตำบลนาจำปา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6461801')">6461801</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6461801')">องค์การบริหารส่วนตำบลเหล่ากลาง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6461802')">6461802</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6461802')">องค์การบริหารส่วนตำบลโคกสะอาด</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6461803')">6461803</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6461803')">องค์การบริหารส่วนตำบลโนนศิลาเลิง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470505')">6470505</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470505')">องค์การบริหารส่วนตำบลต้นผึ้ง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470601')">6470601</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470601')">องค์การบริหารส่วนตำบลวาริชภูมิ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470603')">6470603</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470603')">องค์การบริหารส่วนตำบลค้อเขียว</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470701')">6470701</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470701')">องค์การบริหารส่วนตำบลนิคมน้ำอูน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470702')">6470702</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470702')">องค์การบริหารส่วนตำบลหนองปลิง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470703')">6470703</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470703')">องค์การบริหารส่วนตำบลหนองบัว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470704')">6470704</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470704')">องค์การบริหารส่วนตำบลสุวรรณคาม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470801')">6470801</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470801')">องค์การบริหารส่วนตำบลวานรนิวาส</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470802')">6470802</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470802')">องค์การบริหารส่วนตำบลเดื่อศรีคันไชย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470803')">6470803</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470803')">องค์การบริหารส่วนตำบลขัวก่าย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470804')">6470804</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470804')">องค์การบริหารส่วนตำบลหนองสนม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470805')">6470805</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470805')">องค์การบริหารส่วนตำบลคูสะคาม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470806')">6470806</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470806')">องค์การบริหารส่วนตำบลธาตุ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470203')">6470203</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470203')">องค์การบริหารส่วนตำบลนาเพียง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470204')">6470204</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470204')">องค์การบริหารส่วนตำบลโพธิไพศาล</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470205')">6470205</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470205')">องค์การบริหารส่วนตำบลอุ่มจาน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470302')">6470302</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470302')">องค์การบริหารส่วนตำบลนาม่อง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470402')">6470402</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470402')">องค์การบริหารส่วนตำบลวังยาง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470404')">6470404</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470404')">องค์การบริหารส่วนตำบลนาหัวบ่อ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470406')">6470406</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470406')">องค์การบริหารส่วนตำบลช้างมิ่ง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470409')">6470409</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470409')">องค์การบริหารส่วนตำบลบะฮี</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470410')">6470410</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470410')">องค์การบริหารส่วนตำบลเชิงชุม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470501')">6470501</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470501')">องค์การบริหารส่วนตำบลพังโคน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470502')">6470502</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470502')">องค์การบริหารส่วนตำบลม่วงไข่</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471008')">6471008</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471008')">องค์การบริหารส่วนตำบลบ่อแก้ว</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471101')">6471101</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471101')">องค์การบริหารส่วนตำบลอากาศ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471103')">6471103</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471103')">องค์การบริหารส่วนตำบลวาใหญ่</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471104')">6471104</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471104')">องค์การบริหารส่วนตำบลโพนงาม</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471105')">6471105</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471105')">องค์การบริหารส่วนตำบลท่าก้อน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471106')">6471106</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471106')">องค์การบริหารส่วนตำบลนาฮี</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471201')">6471201</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471201')">องค์การบริหารส่วนตำบลสว่างแดนดิน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471202')">6471202</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471202')">องค์การบริหารส่วนตำบลคำสะอาด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471204')">6471204</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471204')">องค์การบริหารส่วนตำบลบงเหนือ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470808')">6470808</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470808')">องค์การบริหารส่วนตำบลศรีวิชัย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470810')">6470810</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470810')">องค์การบริหารส่วนตำบลอินทร์แปลง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470811')">6470811</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470811')">องค์การบริหารส่วนตำบลนาคำ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470812')">6470812</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470812')">องค์การบริหารส่วนตำบลคอนสวรรค์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470813')">6470813</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470813')">องค์การบริหารส่วนตำบลกุดเรือคำ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470814')">6470814</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470814')">องค์การบริหารส่วนตำบลหนองแวงใต้</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470901')">6470901</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470901')">องค์การบริหารส่วนตำบลคำตากล้า</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470902')">6470902</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470902')">องค์การบริหารส่วนตำบลหนองบัวสิม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6470903')">6470903</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6470903')">องค์การบริหารส่วนตำบลนาแต้</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471001')">6471001</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471001')">องค์การบริหารส่วนตำบลม่วง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471002')">6471002</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471002')">องค์การบริหารส่วนตำบลมาย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471003')">6471003</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471003')">องค์การบริหารส่วนตำบลดงหม้อทอง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471004')">6471004</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471004')">องค์การบริหารส่วนตำบลดงเหนือ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471005')">6471005</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471005')">องค์การบริหารส่วนตำบลดงหม้อทองใต้</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471006')">6471006</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471006')">องค์การบริหารส่วนตำบลโนนสะอาด</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471007')">6471007</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471007')">องค์การบริหารส่วนตำบลหนองกวั่ง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471604')">6471604</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471604')">องค์การบริหารส่วนตำบลโคกศิลา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471605')">6471605</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471605')">องค์การบริหารส่วนตำบลหนองแปน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471701')">6471701</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471701')">องค์การบริหารส่วนตำบลบ้านโพน</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471702')">6471702</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471702')">องค์การบริหารส่วนตำบลนาแก้ว</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471704')">6471704</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471704')">องค์การบริหารส่วนตำบลบ้านแป้น</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471705')">6471705</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471705')">องค์การบริหารส่วนตำบลเชียงสือ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471801')">6471801</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471801')">องค์การบริหารส่วนตำบลสร้างค้อ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471802')">6471802</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471802')">องค์การบริหารส่วนตำบลหลุบเลา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471804')">6471804</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471804')">องค์การบริหารส่วนตำบลกกปลาซิว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480101')">6480101</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480101')">องค์การบริหารส่วนตำบลนาทราย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480102')">6480102</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480102')">องค์การบริหารส่วนตำบลนาราชควาย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480103')">6480103</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480103')">องค์การบริหารส่วนตำบลกุรุคุ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471208')">6471208</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471208')">องค์การบริหารส่วนตำบลค้อใต้</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471209')">6471209</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471209')">องค์การบริหารส่วนตำบลแวง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471210')">6471210</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471210')">องค์การบริหารส่วนตำบลทรายมูล</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471211')">6471211</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471211')">องค์การบริหารส่วนตำบลตาลโกน</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471212')">6471212</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471212')">องค์การบริหารส่วนตำบลตาลเนิ้ง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471213')">6471213</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471213')">องค์การบริหารส่วนตำบลธาตุทอง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471301')">6471301</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471301')">องค์การบริหารส่วนตำบลส่องดาว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471302')">6471302</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471302')">องค์การบริหารส่วนตำบลวัฒนา</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471303')">6471303</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471303')">องค์การบริหารส่วนตำบลปทุมวาปี</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471401')">6471401</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471401')">องค์การบริหารส่วนตำบลเต่างอย</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471402')">6471402</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471402')">องค์การบริหารส่วนตำบลบึงทวาย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471403')">6471403</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471403')">องค์การบริหารส่วนตำบลนาตาล</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471404')">6471404</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471404')">องค์การบริหารส่วนตำบลจันทร์เพ็ญ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471501')">6471501</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471501')">องค์การบริหารส่วนตำบลเหล่าโพนค้อ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471502')">6471502</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471502')">องค์การบริหารส่วนตำบลด่านม่วงคำ</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471503')">6471503</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471503')">องค์การบริหารส่วนตำบลแมดนาท่ม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471601')">6471601</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471601')">องค์การบริหารส่วนตำบลบ้านเหล่า</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471602')">6471602</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471602')">องค์การบริหารส่วนตำบลเจริญศิลป์</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6471603')">6471603</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6471603')">องค์การบริหารส่วนตำบลทุ่งแก</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480304')">6480304</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480304')">องค์การบริหารส่วนตำบลพนอม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480305')">6480305</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480305')">องค์การบริหารส่วนตำบลพะทาย</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480307')">6480307</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480307')">องค์การบริหารส่วนตำบลรามราช</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480308')">6480308</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480308')">องค์การบริหารส่วนตำบลหนองเทา</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480401')">6480401</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480401')">องค์การบริหารส่วนตำบลไผ่ล้อม</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480402')">6480402</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480402')">องค์การบริหารส่วนตำบลโพนทอง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480403')">6480403</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480403')">องค์การบริหารส่วนตำบลหนองแวง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480404')">6480404</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480404')">องค์การบริหารส่วนตำบลนางัว</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480405')">6480405</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480405')">องค์การบริหารส่วนตำบลนาเข</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480104')">6480104</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480104')">องค์การบริหารส่วนตำบลบ้านผึ้ง</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480105')">6480105</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480105')">องค์การบริหารส่วนตำบลอาจสามารถ</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480106')">6480106</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480106')">องค์การบริหารส่วนตำบลขามเฒ่า</a></td>
+	</tr>
+
+	<tr class="trWhite">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480107')">6480107</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480107')">องค์การบริหารส่วนตำบลบ้านกลาง</a></td>
+	</tr>
+
+	<tr class="trGray">
+		<td align="center" width="225"><a href="#" onClick="clickDept('6480108')">6480108</a></td>
+		<td>&nbsp;<a href="#" onClick="clickDept('6480108')">องค์การบริหารส่วนตำบลท่าค้อ</a></td>
+	</tr>
+
+</table>
+</div>
+
+</td></tr></table>
+
+<input type="hidden" id="flag"      name="flag" value="SEARCH %>">
+<input type="hidden" id="servlet"   name="servlet" value="gojsp">
+<input type="hidden" id="proc_id"   name="proc_id" value="FAGN0103H">
+<input type="hidden" id="proc_name" name="proc_name" value="Agency">
+<input type="hidden" id="url"       name="url" value="agc/">
+
+<input type="hidden" id="hidPROV_ID"  name="hidPROV_ID" value="">
+<input type="hidden" id="hidAMP_ID"   name="hidAMP_ID" value="">
+<input type="hidden" id="hidMOI_ID"   name="hidMOI_ID" value="">
+<input type="hidden" id="hidMINIS_ID" name="hidMINIS_ID" value="">
+
+
+
+</form>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrProvinceHidden" value="810000:กระบี่|100000:กรุงเทพมหานคร|710000:กาญจนบุรี|460000:กาฬสินธุ์|620000:กำแพงเพชร|400000:ขอนแก่น|220000:จันทบุรี|240000:ฉะเชิงเทรา|200000:ชลบุรี|180000:ชัยนาท|360000:ชัยภูมิ|860000:ชุมพร|570000:เชียงราย|500000:เชียงใหม่|920000:ตรัง|230000:ตราด|630000:ตาก|260000:นครนายก|730000:นครปฐม|480000:นครพนม|300000:นครราชสีมา|800000:นครศรีธรรมราช|600000:นครสวรรค์|120000:นนทบุรี|960000:นราธิวาส|550000:น่าน|380000:บึงกาฬ|310000:บุรีรัมย์|130000:ปทุมธานี|770000:ประจวบคีรีขันธ์|250000:ปราจีนบุรี|940000:ปัตตานี|140000:พระนครศรีอยุธยา|560000:พะเยา|820000:พังงา|930000:พัทลุง|660000:พิจิตร|650000:พิษณุโลก|760000:เพชรบุรี|670000:เพชรบูรณ์|540000:แพร่|830000:ภูเก็ต|440000:มหาสารคาม|490000:มุกดาหาร|580000:แม่ฮ่องสอน|350000:ยโสธร|950000:ยะลา|450000:ร้อยเอ็ด|850000:ระนอง|210000:ระยอง|700000:ราชบุรี|160000:ลพบุรี|520000:ลำปาง|510000:ลำพูน|420000:เลย|330000:ศรีสะเกษ|470000:สกลนคร|900000:สงขลา|910000:สตูล|110000:สมุทรปราการ|750000:สมุทรสงคราม|740000:สมุทรสาคร|270000:สระแก้ว|190000:สระบุรี|170000:สิงห์บุรี|640000:สุโขทัย|720000:สุพรรณบุรี|840000:สุราษฎร์ธานี|320000:สุรินทร์|430000:หนองคาย|390000:หนองบัวลำภู|150000:อ่างทอง|370000:อำนาจเจริญ|410000:อุดรธานี|530000:อุตรดิตถ์|610000:อุทัยธานี|340000:อุบลราชธานี">
+<input type="hidden" id="moiCodeHidden" value="">
+<script>
+	var provinceName;
+	var amperName;
+	var tambolName;
+
+	function refreshProvinceList(provinceName,amperName,tambolName,moiCode){
+		this.provinceName = provinceName;
+		this.amperName = amperName;
+		this.tambolName = tambolName;
+		if(moiCode != 'undefined'){
+			document.getElementById("moiCodeHidden").value = moiCode;
+		}
+		updateProvinceList();
+	}
+	
+	function updateProvinceList(){
+		clearProvinceList();
+		var province = document.getElementById(this.provinceName);
+		
+		var moiCode = document.getElementById("moiCodeHidden").value;
+		if(moiCode != ""){
+			moiCode = moiCode.substring(0,2)+"0000";
+		}
+		
+		var results = document.getElementById("arrProvinceHidden").value;
+		//results = results.substring(results.indexOf("P")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == moiCode){
+				option.selected = "selected";
+			}
+			province.appendChild(option);
+		}
+		
+		if (document.getElementById(this.amperName) != null) {
+			refreshAmperList(provinceName,amperName,tambolName);
+		}
+	}
+
+	function clearProvinceList(){
+		var province = document.getElementById(this.provinceName);
+		while(province.childNodes.length > 0){
+			province.removeChild(province.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกจังหวัด>"));
+		option.value = "";
+		province.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+<input type="hidden" id="arrProvinceHidden2" value="810000:กระบี่|100000:กรุงเทพมหานคร|710000:กาญจนบุรี|460000:กาฬสินธุ์|620000:กำแพงเพชร|400000:ขอนแก่น|220000:จันทบุรี|240000:ฉะเชิงเทรา|200000:ชลบุรี|180000:ชัยนาท|360000:ชัยภูมิ|860000:ชุมพร|570000:เชียงราย|500000:เชียงใหม่|920000:ตรัง|230000:ตราด|630000:ตาก|260000:นครนายก|730000:นครปฐม|480000:นครพนม|300000:นครราชสีมา|800000:นครศรีธรรมราช|600000:นครสวรรค์|120000:นนทบุรี|960000:นราธิวาส|550000:น่าน|380000:บึงกาฬ|310000:บุรีรัมย์|130000:ปทุมธานี|770000:ประจวบคีรีขันธ์|250000:ปราจีนบุรี|940000:ปัตตานี|140000:พระนครศรีอยุธยา|560000:พะเยา|820000:พังงา|930000:พัทลุง|660000:พิจิตร|650000:พิษณุโลก|760000:เพชรบุรี|670000:เพชรบูรณ์|540000:แพร่|830000:ภูเก็ต|440000:มหาสารคาม|490000:มุกดาหาร|580000:แม่ฮ่องสอน|350000:ยโสธร|950000:ยะลา|450000:ร้อยเอ็ด|850000:ระนอง|210000:ระยอง|700000:ราชบุรี|160000:ลพบุรี|520000:ลำปาง|510000:ลำพูน|420000:เลย|330000:ศรีสะเกษ|470000:สกลนคร|900000:สงขลา|910000:สตูล|110000:สมุทรปราการ|750000:สมุทรสงคราม|740000:สมุทรสาคร|270000:สระแก้ว|190000:สระบุรี|170000:สิงห์บุรี|640000:สุโขทัย|720000:สุพรรณบุรี|840000:สุราษฎร์ธานี|320000:สุรินทร์|430000:หนองคาย|390000:หนองบัวลำภู|150000:อ่างทอง|370000:อำนาจเจริญ|410000:อุดรธานี|530000:อุตรดิตถ์|610000:อุทัยธานี|340000:อุบลราชธานี">
+<input type="hidden" id="moiCodeHidden2" value="">
+<script>
+	var provinceName2;
+	var amperName2;
+	var tambolName2;
+
+	function refreshProvinceList2(provinceName,amperName,tambolName,moiCode){
+		this.provinceName2 = provinceName;
+		this.amperName2 = amperName;
+		this.tambolName2 = tambolName;
+		if(moiCode != 'undefined'){
+			document.getElementById("moiCodeHidden2").value = moiCode;
+		}
+		updateProvinceList2();
+	}
+	
+	function updateProvinceList2(){
+		clearProvinceList2();
+		var province = document.getElementById(this.provinceName2);
+		
+		var moiCode = document.getElementById("moiCodeHidden2").value;
+		if(moiCode != ""){
+			moiCode = moiCode.substring(0,2)+"0000";
+		}
+		
+		var results = document.getElementById("arrProvinceHidden2").value;
+		//results = results.substring(results.indexOf("P")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == moiCode){
+				option.selected = "selected";
+			}
+			province.appendChild(option);
+		}
+
+		refreshAmperList2(provinceName2,amperName2,tambolName2);
+	}
+
+	function clearProvinceList2(){
+		var province = document.getElementById(this.provinceName2);
+		while(province.childNodes.length > 0){
+			province.removeChild(province.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกจังหวัด>"));
+		option.value = "";
+		province.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrOrgHidden" value="1:ส่วนราชการ|2:รัฐวิสาหกิจ|3:องค์การมหาชน|4:หน่วยงานของรัฐที่ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวงหรือทบวง|5:องค์กรอิสระตามรัฐธรรมนูญ|6:องค์กรปกครองส่วนท้องถิ่น|7:หน่วยงานอื่นๆ">
+<script>
+	var orgName;
+	var orgUnitName;
+	var orgId;
+	
+	// change org
+	function refreshOrgList(orgName,orgUnitName,orgId,orgUnitId){
+		this.orgName = orgName;
+		this.orgUnitName = orgUnitName;
+		if(orgId == 'undefined'){
+			orgId = "";
+		}
+		this.orgId = orgId;
+
+		updateOrgList();
+	}
+	
+	function updateOrgList(){
+		clearOrgList();
+		var org = document.getElementById(this.orgName);
+		//var orgId = document.getElementById("orgIdHidden").value;
+		var results = document.getElementById("arrOrgHidden").value;
+		//results = results.substring(results.indexOf("O")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == this.orgId){
+				option.selected = "selected";
+			}
+			org.appendChild(option);
+		}
+		refreshOrgUnitList(orgName,orgUnitName);
+	}
+
+	function clearOrgList(){
+		var org = document.getElementById(this.orgName);
+		while(org.childNodes.length > 0){
+			org.removeChild(org.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกประเภทหน่วยงานภาครัฐ>"));
+		option.value = "";
+		org.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrGrpHidden" value="1:ทั่วไป|2:วิชาการ|3:อำนวยการ|4:บริหาร">
+<script>
+	var grpName;
+	var grpSubName;
+	var grpId;
+	
+	// change grp
+	function refreshGrpList(grpName,grpSubName,grpId){
+		this.grpName = grpName;
+		this.grpSubName = grpSubName;
+
+		if(grpId == 'undefined'){
+			grpId = "";
+		}
+		this.grpId = grpId
+
+		updateGrpList();
+	}
+	
+	function updateGrpList(){
+		clearGrpList();
+		var grp = document.getElementById(this.grpName);
+		//var grpId = document.getElementById("grpIdHidden").value;
+		var results = document.getElementById("arrGrpHidden").value;
+		//results = results.substring(results.indexOf("G")+1);
+		var option = null;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			option = document.createElement("option");
+			option.appendChild(document.createTextNode(t[1]));
+			option.value = t[0];
+			if(t[0] == this.grpId){
+				option.selected = "selected";
+			}
+			grp.appendChild(option);
+		}
+		refreshGrpSubList(grpName,grpSubName);
+	}
+
+	function clearGrpList(){
+		var grp = document.getElementById(this.grpName);
+		while(grp.childNodes.length > 0){
+			grp.removeChild(grp.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกกลุ่ม>"));
+		option.value = "";
+		grp.appendChild(option);
+	}
+</script>
+
+
+
+
+
+
+
+
+<input type="hidden" id="arrDeptHidden" value="01:สำนักนายกรัฐมนตรี:1:1|02:กระทรวงกลาโหม:1:1|03:กระทรวงการคลัง:1:1|04:กระทรวงการต่างประเทศ:1:1|05:กระทรวงการท่องเที่ยวและกีฬา:1:1|06:กระทรวงพัฒนาสังคมและความมั่นคงของมนุษย์:1:1|07:กระทรวงเกษตรและสหกรณ์:1:1|08:กระทรวงคมนาคม:1:1|09:กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม:1:1|11:กระทรวงเทคโนโลยีสารสนเทศและการสื่อสาร:1:1|12:กระทรวงพลังงาน:1:1|13:กระทรวงพาณิชย์:1:1|15:กระทรวงมหาดไทย:1:1|16:กระทรวงยุติธรรม:1:1|17:กระทรวงแรงงาน:1:1|18:กระทรวงวัฒนธรรม:1:1|19:กระทรวงวิทยาศาสตร์และเทคโนโลยี:1:1|20:กระทรวงศึกษาธิการ:1:1|21:กระทรวงสาธารณสุข:1:1|22:กระทรวงอุตสาหกรรม:1:1|25:หน่วยงานของรัฐที่ไม่สังกัดสำนักนายกรัฐมนตรี กระทรวงหรือทบวง:4:1|26:องค์กรอิสระตามรัฐธรรมนูญ:5:1">
+<script>
+	var deptName;
+	var deptId;
+	var s_orgId;
+	var s_orgUnitId;
+	
+	function refreshMinisList(deptName,deptId,orgId,orgUnitId){
+		this.deptName = deptName;
+		if(deptId == 'undefined'){
+			deptId = "";
+		}
+		this.deptId = deptId;
+		this.s_orgId = orgId;
+		this.s_orgUnitId = orgUnitId;
+
+		updateMinisList();
+	}
+	
+	function updateMinisList(){
+		clearMinisList();
+		var dept = document.getElementById(this.deptName);
+		var results = document.getElementById("arrDeptHidden").value;
+		var option = null;
+		var tempFlag;
+		p = results.split("|");
+		for(var i = 0;i < p.length;i++){
+			t = p[i].split(":");
+			if(t[2] == s_orgId && t[3] == s_orgUnitId){
+				tempFlag = "T";
+				option = document.createElement("option");
+				option.appendChild(document.createTextNode(t[1]));
+				option.value = t[0];
+				if(t[0] == this.deptId){
+					option.selected = "selected";
+				}
+				dept.appendChild(option);
+			}
+		}
+		
+	}
+
+	function clearMinisList(){
+		var dept = document.getElementById(this.deptName);
+		while(dept.childNodes.length > 0){
+			dept.removeChild(dept.childNodes[0]);
+		}
+		var option = null;
+		option = document.createElement("option");
+		option.appendChild(document.createTextNode("<ตัวเลือกกระทรวง>"));
+		option.value = "";
+		dept.appendChild(option);
+	}
+</script>
+
+</body>
+</html>
+  
